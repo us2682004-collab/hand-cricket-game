@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Live Hand Cricket</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
+body{
+
+height:100vh;
+overflow:hidden;
+
+background:
+linear-gradient(
+rgba(0,0,0,.35),
+rgba(0,50,0,.75)
+),
+url("https://images.unsplash.com/photo-1565787737814-7b38e7b5d1a6")
+center/cover;
+
+
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+
+}
+
+
+body:before{
+
+content:"";
+
+position:absolute;
+inset:0;
+
+background:
+radial-gradient(circle at 15% 10%,#fff8,transparent 15%),
+radial-gradient(circle at 85% 10%,#fff8,transparent 15%);
+
+animation:light 2s infinite alternate;
+
+}
+
+
+@keyframes light{
+
+from{opacity:.4}
+to{opacity:1}
+
+}
+
+
+
+.game{
+
+position:relative;
+z-index:2;
+
+width:390px;
+
+background:#000b;
+
+padding:20px;
+
+border-radius:25px;
+
+backdrop-filter:blur(12px);
+
+box-shadow:
+0 0 40px #00ff99;
+
+text-align:center;
+
+}
+
+
+h1{
+
+font-size:40px;
+
+color:#00ffcc;
+
+text-shadow:
+0 0 20px cyan;
+
+}
+
+
+
+.pitch{
+
+width:230px;
+height:110px;
+
+margin:15px auto;
+
+background:
+linear-gradient(90deg,#20bf55,#01baef);
+
+border-radius:50%;
+
+border:6px solid #d6b27a;
+
+transform:
+perspective(500px)
+rotateX(60deg);
+
+box-shadow:
+0 35px 30px black;
+
+}
+
+
+
+.players{
+
+display:flex;
+justify-content:space-between;
+
+}
+
+
+
+.card{
+
+width:45%;
+
+background:#ffffff22;
+
+border-radius:18px;
+
+padding:10px;
+
+}
+
+
+
+.hand{
+
+font-size:55px;
+
+height:70px;
+
+animation:hand .4s;
+
+}
+
+
+
+@keyframes hand{
+
+0%{
+transform:translateX(-100px);
+opacity:0;
+}
+
+100%{
+transform:translateX(0);
+opacity:1;
+}
+
+}
+
+
+
+.score{
+
+font-size:22px;
+
+margin:15px;
+
+}
+
+
+
+button{
+
+cursor:pointer;
+
+border:none;
+
+}
+
+
+
+.menu button,
+.home{
+
+width:90%;
+
+padding:15px;
+
+margin:10px;
+
+border-radius:30px;
+
+font-size:18px;
+
+font-weight:bold;
+
+background:
+linear-gradient(45deg,#00ff99,#00ccff);
+
+}
+
+
+
+.numbers button{
+
+width:55px;
+
+height:55px;
+
+margin:5px;
+
+border-radius:50%;
+
+font-size:22px;
+
+background:
+linear-gradient(145deg,#ffcc00,#ff6600);
+
+}
+
+
+
+.msg{
+
+font-size:20px;
+
+color:#ffe600;
+
+margin:15px;
+
+}
+
+
+
+#game{
+
+display:none;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="game">
+
+
+<div id="home">
+
+<h1>🏏 HAND CRICKET</h1>
+
+
+<div class="pitch"></div>
+
+
+<div class="menu">
+
+<button onclick="start('AI')">
+👤 PLAYER VS AI
+</button>
+
+<button onclick="start('PVP')">
+👥 PLAYER VS PLAYER
+</button>
+
+
+</div>
+
+</div>
+
+
+
+
+
+<div id="game">
+
+
+<h1>🏏 LIVE MATCH</h1>
+
+
+<div class="pitch"></div>
+
+
+
+<div class="players">
+
+
+<div class="card">
+
+PLAYER 1
+
+<div class="hand" id="hand1">
+✋
+</div>
+
+Score:
+<span id="p1">0</span>
+
+</div>
+
+
+
+<div class="card">
+
+PLAYER 2
+
+<div class="hand" id="hand2">
+✋
+</div>
+
+Score:
+<span id="p2">0</span>
+
+
+</div>
+
+
+</div>
+
+
+
+<div class="msg" id="msg">
+Choose Shot
+</div>
+
+
+
+<div class="numbers">
+
+<button onclick="play(1)">1</button>
+<button onclick="play(2)">2</button>
+<button onclick="play(3)">3</button>
+<button onclick="play(4)">4</button>
+<button onclick="play(5)">5</button>
+<button onclick="play(6)">6</button>
+
+</div>
+
+
+
+<button class="home" onclick="location.reload()">
+🏠 HOME
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<script>
+
+let p1=0;
+let p2=0;
+let turn=1;
+let mode="";
+
+
+function start(m){
+
+mode=m;
+
+home.style.display="none";
+game.style.display="block";
+
+}
+
+
+
+function hand(n){
+
+return [
+"✋",
+"☝️",
+"✌️",
+"🤟",
+"🖖",
+"🖐️",
+"✊"
+
+][n];
+
+}
+
+
+
+function play(num){
+
+
+let enemy=
+Math.floor(Math.random()*6)+1;
+
+
+
+if(turn==1){
+
+
+hand1.innerHTML=hand(num);
+
+hand2.innerHTML=hand(enemy);
+
+
+
+if(num==enemy){
+
+turn=2;
+
+msg.innerHTML=
+"🔥 OUT! PLAYER 2 BATTING";
+
+}
+
+else{
+
+p1+=num;
+
+msg.innerHTML=
+"🏃 "+num+" RUNS - NOT OUT";
+
+}
+
+}
+
+
+
+else{
+
+
+if(mode=="AI")
+enemy=Math.floor(Math.random()*6)+1;
+
+else
+enemy=prompt("Player 2 Number");
+
+
+
+hand1.innerHTML=hand(num);
+
+hand2.innerHTML=hand(enemy);
+
+
+
+if(num==enemy){
+
+finish();
+
+}
+
+else{
+
+p2+=Number(enemy);
+
+msg.innerHTML=
+"🏃 "+enemy+" RUNS";
+
+}
+
+}
+
+
+
+document.getElementById("p1").innerHTML=p1;
+
+document.getElementById("p2").innerHTML=p2;
+
+
+}
+
+
+
+
+function finish(){
+
+if(p1>p2)
+
+msg.innerHTML=
+"🏆 PLAYER 1 WIN";
+
+else
+
+msg.innerHTML=
+"🏆 PLAYER 2 WIN";
+
+
+}
+
+
+</script>
+
+
+</body>
+</html>
